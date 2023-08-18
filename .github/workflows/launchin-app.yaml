@@ -22,13 +22,14 @@ jobs:
         python -m pip install --upgrade pip
         pip install dash  
         pip install plotly
+        pip install pandas
 
     - name: Run Dash App
       run: |
         python test.py &
         sleep 10  
         curl localhost:9697
-        
+
     - name: Install ngrok and create tunnel
       env:
         NGROK_AUTH_TOKEN: ${{ secrets.NGROK_AUTH_TOKEN }} # Assuming you have a secret named NGROK_AUTH_TOKEN
