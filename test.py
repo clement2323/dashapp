@@ -19,7 +19,7 @@ app = dash.Dash(__name__)
 
 # Définir la mise en page de l'application
 app.layout = html.Div([
-    html.Div("Coucou Loulou", style={
+    html.Div("Coucou Kiki Loulou", style={
         'backgroundColor': 'black',
         'color': 'white',
         'fontStyle': 'italic',
