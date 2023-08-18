@@ -40,5 +40,9 @@ jobs:
     - name: Display ngrok URL
       run: |
         curl http://localhost:4040/api/tunnels | jq ".tunnels[0].public_url"
+    
+    - name: Keep Alive for 1 hour
+      run: |
+        sleep 2400
 
 
