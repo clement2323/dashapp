@@ -1,52 +1,59 @@
-# Importer les bibliothèques nécessaires
+# Import necessary libraries
 import dash
 from dash import dcc, html
 from dash.dependencies import Input, Output
 import plotly.express as px
 import pandas as pd
 
-# Créer une base de données fictive
+# Sample dataset
 data = {
-    'Région': ['Auvergne-Rhône-Alpes', 'Bretagne', 'Corse', 'Grand Est', 'Hauts-de-France', 'Île-de-France', 'Normandie', 'Nouvelle-Aquitaine', 'Occitanie', 'Pays de la Loire', 'Provence-Alpes-Côte d\'Azur'],
+    'Région': ['Auvergne-Rhône-Alpes', 'Bretagne', 'Corse', 'Grand Est', 
+               'Hauts-de-France', 'Île-de-France', 'Normandie', 'Nouvelle-Aquitaine', 
+               'Occitanie', 'Pays de la Loire', 'Provence-Alpes-Côte d\'Azur'],
     'Taux': [5, 10, 3, 7, 8, 12, 6, 9, 11, 5, 10]
 }
-
 df = pd.DataFrame(data)
-df = df.sort_values(by='Taux', ascending=False)
+df.sort_values(by='Taux', inplace=True, ascending=False)
 
-# Créer l'application Dash
+# Create the Dash app
 app = dash.Dash(__name__)
 
-# Définir la mise en page de l'application
+# Stylish layout
 app.layout = html.Div([
-    html.Div("Coucou Kiki Loulou", style={
-        'backgroundColor': 'black',
-        'color': 'white',
-        'fontStyle': 'italic',
-        'padding': '30px 10px',
+    html.Div("Analysis of Taux by Région", style={
+        'backgroundColor': '#34495E',
+        'color': '#ECF0F1',
+        'padding': '30px',
         'fontSize': '36px',
-        'textAlign': 'center'
+        'textAlign': 'center',
+        'borderRadius': '8px',
+        'margin': '20px'
     }),
     dcc.Graph(id='bar-graph', 
               config={'staticPlot': False, 'displayModeBar': True},
               style={'width': '50%', 'display': 'inline-block'}),
-    dcc.Graph(id='scatter-plot', style={'width': '50%', 'display': 'inline-block'}),
-    html.Div("Comment bien faire une passe", style={
-        'padding': '10px',
-        'fontSize': '20px',
-        'textAlign': 'center'
+    dcc.Graph(id='scatter-plot', 
+              style={'width': '50%', 'display': 'inline-block'}),
+    html.Div("Detailed Overview", style={
+        'padding': '20px',
+        'fontSize': '24px',
+        'textAlign': 'center',
+        'marginTop': '20px',
+        'backgroundColor': '#7F8C8D',
+        'color': '#FDFEFE',
+        'borderRadius': '8px',
+        'margin': '20px'
     }),
-    # Ajout de l'image
     html.Img(src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR-GDBi86JV1DCfwNs6-1vAD9i8thTqXbwe0A&usqp=CAU", 
              style={
                  'display': 'block',
-                 'margin-left': 'auto',
-                 'margin-right': 'auto',
-                 'width': '500px'
+                 'margin': '20px auto',
+                 'width': '400px',
+                 'borderRadius': '8px',
+                 'boxShadow': '5px 5px 15px #888888'
             }
     )
-    #html.Div(id='output')
-])
+], style={'backgroundColor': '#EAEDED', 'padding': '20px', 'borderRadius': '8px', 'boxShadow': '0px 0px 15px #888888'})
 
 @app.callback(
     [Output('bar-graph', 'figure'),
@@ -54,22 +61,25 @@ app.layout = html.Div([
     [Input('bar-graph', 'clickData')]
 )
 def update_graph(clicked_data):
-    bar_figure = px.bar(df, x='Région', y='Taux', title="Taux par Région")
+    bar_figure = px.bar(df, x='Région', y='Taux', title="Taux Distribution by Région", 
+                        color_discrete_sequence=["#3498DB"])
     bar_figure.update_xaxes(title_text='')
+    bar_figure.update_layout(paper_bgcolor="#EAEDED", plot_bgcolor="#EAEDED")
 
     if clicked_data:
         selected_region = clicked_data['points'][0]['x']
         sizes = [30 if region == selected_region else 10 for region in df['Région']]
-        colors = ['red' if region == selected_region else 'blue' for region in df['Région']]
+        colors = ['red' if region == selected_region else '#3498DB' for region in df['Région']]
     else:
         sizes = [10] * df.shape[0]
-        colors = ['blue'] * df.shape[0]
+        colors = ['#3498DB'] * df.shape[0]
 
-    scatter_figure = px.scatter(df, x='Région', y='Taux', title="Nuage de Points des Taux par Région")
+    scatter_figure = px.scatter(df, x='Région', y='Taux', title="Scatter Plot of Taux by Région")
     scatter_figure.update_traces(marker=dict(size=sizes, color=colors))
     scatter_figure.update_xaxes(title_text='')
+    scatter_figure.update_layout(paper_bgcolor="#EAEDED", plot_bgcolor="#EAEDED")
 
     return bar_figure, scatter_figure
 
 if __name__ == '__main__':
-    app.run_server(debug=True,port  = 9697)
+    app.run_server(debug=True, port=9697)
